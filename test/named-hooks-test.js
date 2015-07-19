@@ -21,6 +21,13 @@ describe('NamedHooks', function () {
       assert.equal(typeof NamedHooks, 'object');
     });
 
+    it('throws an error if namespace is not a string', function () {
+
+      assert.throws(function () {
+        NamedHooks = require('..')();
+      }, Error);
+    });
+
     it('same `namespace` returns the same object', function () {
       var NamedHooks1 = require('..')('namespace'),
           NamedHooks2 = require('..')('namespace');
