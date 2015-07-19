@@ -27,5 +27,14 @@ describe('NamedHooks', function () {
 
       assert.equal(NamedHooks1, NamedHooks2);
     });
+
+    it('different namespaces return different objects', function () {
+      var NamedHooks1 = require('..')('namespace1'),
+          NamedHooks2 = require('..')('namespace2');
+
+      assert.notEqual(NamedHooks1, NamedHooks2);
+    });
   });
 });
+
+
