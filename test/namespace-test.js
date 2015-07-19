@@ -7,14 +7,18 @@ var assert = require('assert'),
 var Namespace = require('../lib/namespace');
 
 describe('Namespace', function () {
+  var namespace;
+
+  beforeEach(function () {
+    namespace = new Namespace();
+  });
+
   describe('constructor', function () {
     it('returns a Function constructor', function () {
       assert.equal(typeof Namespace, 'function');
     });
 
     it('returns an object with a `hooks` object property', function () {
-      var namespace = new Namespace();
-
       assert.equal(typeof namespace.hooks, 'object');
     });
   });
@@ -31,7 +35,6 @@ describe('Namespace', function () {
     });
 
     it('`fs.readdir` is called on `folder`', function () {
-      var namespace = new Namespace();
       var spy = sinon.spy(fs, 'readdir');
 
       namespace.load(folder);
@@ -40,7 +43,6 @@ describe('Namespace', function () {
     });
 
     it('`this.hooks` is empty if folder is empty', function () {
-      var namespace = new Namespace();
       var readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([]));
 
       namespace.load(folder);
