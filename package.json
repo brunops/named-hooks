@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/brunops/named-hooks/issues"
   },
-  "homepage": "https://github.com/brunops/named-hooks"
+  "homepage": "https://github.com/brunops/named-hooks",
+  "devDependencies": {
+    "sinon": "^1.15.4"
+  }
 }
