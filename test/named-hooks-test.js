@@ -20,5 +20,12 @@ describe('NamedHooks', function () {
 
       assert.equal(typeof NamedHooks, 'object');
     });
+
+    it('same `namespace` returns the same object', function () {
+      var NamedHooks1 = require('..')('namespace'),
+          NamedHooks2 = require('..')('namespace');
+
+      assert.equal(NamedHooks1, NamedHooks2);
+    });
   });
 });
