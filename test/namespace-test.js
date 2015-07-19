@@ -26,6 +26,10 @@ describe('Namespace', function () {
       folder = './namespace-mock-folder';
     });
 
+    afterEach(function () {
+      fs.readdir.restore();
+    });
+
     it('`fs.readdir` is called on `folder`', function () {
       var namespace = new Namespace();
       var spy = sinon.spy(fs, 'readdir');
@@ -34,5 +38,22 @@ describe('Namespace', function () {
 
       assert.equal(spy.calledWith(folder), true);
     });
+
+    it('`this.hooks` is empty if folder is empty', function () {
+      var namespace = new Namespace();
+      var readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([]));
+
+      namespace.load(folder);
+
+      assert.equal(Object.keys(namespace.hooks).length, 0);
+    });
   });
 });
+
+function curryReaddirStubCb(files) {
+  return function (path, callback) {
+    callback(null, files);
+  }
+}
+
+
