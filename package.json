@@ -1,0 +1,29 @@
+{
+  "name": "named-hooks",
+  "version": "0.0.1",
+  "description": "Define and invoke hooks based on function names",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brunops/named-hooks.git"
+  },
+  "keywords": [
+    "nodejs",
+    "node",
+    "hooks",
+    "webhooks",
+    "named-hooks"
+  ],
+  "author": "brunops",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brunops/named-hooks/issues"
+  },
+  "homepage": "https://github.com/brunops/named-hooks"
+}
