@@ -11,6 +11,14 @@ describe('NamedHooks', function () {
       NamedHooks = require('..');
 
       assert.equal(typeof NamedHooks, 'function');
-    })
+    });
+  });
+
+  describe('require("named-hooks")(namespace)', function () {
+    it('namespaced constructor returns an object', function () {
+      NamedHooks = require('..')('namespace');
+
+      assert.equal(typeof NamedHooks, 'object');
+    });
   });
 });
