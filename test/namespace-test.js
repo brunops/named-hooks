@@ -56,7 +56,15 @@ describe('Namespace', function () {
 
       namespace.load(folder);
 
-      assert.equal(typeof namespace.hooks.myHook, 'function');
+      assert.equal(typeof namespace.hooks.hook1File1, 'function');
+    });
+
+    it('loads `file1.js` and `file2.js` exported methods into `this.hooks`', function () {
+      readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([ 'file1.js', 'file2.js' ]));
+
+      namespace.load(folder);
+
+      assert.equal(Object.keys(namespace.hooks).length, 4);
     });
   });
 });
