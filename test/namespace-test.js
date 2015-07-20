@@ -27,7 +27,7 @@ describe('Namespace', function () {
     var folder;
 
     beforeEach(function () {
-      folder = './namespace-mock-folder';
+      folder = '../test/namespace-mock-folder';
     });
 
     afterEach(function () {
@@ -48,6 +48,14 @@ describe('Namespace', function () {
       namespace.load(folder);
 
       assert.equal(Object.keys(namespace.hooks).length, 0);
+    });
+
+    it('loads `file1.js` exported methods into `this.hooks`', function () {
+      var readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([ 'file1.js' ]));
+
+      namespace.load(folder);
+
+      assert.equal(typeof namespace.hooks.myHook, 'function');
     });
   });
 });
