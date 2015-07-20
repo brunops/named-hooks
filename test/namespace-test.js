@@ -24,7 +24,8 @@ describe('Namespace', function () {
   });
 
   describe('#load(folder)', function () {
-    var folder;
+    var folder,
+        readdirStub;
 
     beforeEach(function () {
       folder = '../test/namespace-mock-folder';
@@ -43,7 +44,7 @@ describe('Namespace', function () {
     });
 
     it('`this.hooks` is empty if folder is empty', function () {
-      var readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([]));
+      readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([]));
 
       namespace.load(folder);
 
@@ -51,7 +52,7 @@ describe('Namespace', function () {
     });
 
     it('loads `file1.js` exported methods into `this.hooks`', function () {
-      var readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([ 'file1.js' ]));
+      readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([ 'file1.js' ]));
 
       namespace.load(folder);
 
