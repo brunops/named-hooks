@@ -15,13 +15,18 @@ describe('NamedHooks', function () {
 
   describe('require("named-hooks")(namespace)', function () {
     it('namespaced constructor returns an object', function () {
-      namespace = require('..')('namespace');
+      namespace = NamedHooks('namespace');
 
       assert.equal(typeof namespace, 'object');
     });
 
-    it('throws an error if namespace is not a string', function () {
+    it('namespaced constructor returns a `Namespace` object', function () {
+      namespace = NamedHooks('namespace');
 
+      assert.equal(namespace.constructor.name, 'Namespace');
+    });
+
+    it('throws an error if namespace is not a string', function () {
       assert.throws(function () {
         NamedHooks();
       }, Error);
