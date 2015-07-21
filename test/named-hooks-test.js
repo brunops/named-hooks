@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('assert'),
+    path = require('path'),
     sinon = require('sinon');
 
 var NamedHooks = require('..');
@@ -59,9 +60,10 @@ describe('NamedHooks', function () {
       var namedHooks1 = NamedHooks('name'),
           spy = sinon.spy(namedHooks1.namespace, 'load');
 
-      namedHooks1.init('../namespace-mock-folder');
+      namedHooks1.init(path.resolve('./test/namespace-mock-folder'));
 
       assert.equal(spy.called, true);
+      console.log(namedHooks1.namespace.hooks)
     });
   });
 });

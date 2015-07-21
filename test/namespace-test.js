@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('assert'),
+    path = require('path'),
     fs = require('fs'),
     sinon = require('sinon');
 
@@ -25,26 +26,34 @@ describe('Namespace', function () {
 
   describe('#load(folder)', function () {
     var folder,
-        readdirStub;
+        readdirSyncStub;
 
     beforeEach(function () {
-      folder = '../test/namespace-mock-folder';
+      folder = path.resolve('./test/namespace-mock-folder');
     });
 
     afterEach(function () {
-      fs.readdir.restore();
+      fs.readdirSync.restore();
     });
 
-    it('`fs.readdir` is called on `folder`', function () {
-      var spy = sinon.spy(fs, 'readdir');
+    it('`fs.readdirSync` is called on `folder`', function () {
+      var spy = sinon.spy(fs, 'readdirSync');
 
       namespace.load(folder);
 
       assert.equal(spy.calledWith(folder), true);
     });
 
+    it('throws an error if `folder` does not exist', function () {
+      var stub = sinon.stub(fs, 'readdirSync', fs.readdirSync);
+
+      assert.throws(function () {
+        namespace.load('./does-not-exist');
+      }, Error);
+    });
+
     it('`this.hooks` is empty if folder is empty', function () {
-      readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([]));
+      readdirSyncStub = sinon.stub(fs, 'readdirSync', curryReaddirSyncStubCb([]));
 
       namespace.load(folder);
 
@@ -52,7 +61,7 @@ describe('Namespace', function () {
     });
 
     it('loads `file1.js` exported methods into `this.hooks`', function () {
-      readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([ 'file1.js' ]));
+      readdirSyncStub = sinon.stub(fs, 'readdirSync', curryReaddirSyncStubCb([ 'file1.js' ]));
 
       namespace.load(folder);
 
@@ -60,7 +69,7 @@ describe('Namespace', function () {
     });
 
     it('loads `file1.js` and `file2.js` exported methods into `this.hooks`', function () {
-      readdirStub = sinon.stub(fs, 'readdir', curryReaddirStubCb([ 'file1.js', 'file2.js' ]));
+      readdirSyncStub = sinon.stub(fs, 'readdirSync', curryReaddirSyncStubCb([ 'file1.js', 'file2.js' ]));
 
       namespace.load(folder);
 
@@ -69,7 +78,7 @@ describe('Namespace', function () {
   });
 });
 
-function curryReaddirStubCb(files) {
+function curryReaddirSyncStubCb(files) {
   return function (path, callback) {
     callback(null, files);
   }
