@@ -13,9 +13,9 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('require("named-hooks")(namespace)', function () {
-    it('namespaced constructor returns an object', function () {
-      namespace = NamedHooks('namespace');
+  describe('NamedHooks(name)', function () {
+    it('named constructor returns an object', function () {
+      namespace = NamedHooks('name');
 
       assert.equal(typeof namespace, 'object');
     });
@@ -26,22 +26,22 @@ describe('NamedHooks', function () {
       assert.equal(namespace.constructor.name, 'Namespace');
     });
 
-    it('throws an error if namespace is not a string', function () {
+    it('throws an error if `name` is not a string', function () {
       assert.throws(function () {
         NamedHooks();
       }, Error);
     });
 
-    it('same `namespace` returns the same object', function () {
-      var NamedHooks1 = NamedHooks('namespace'),
-          NamedHooks2 = NamedHooks('namespace');
+    it('same `name` returns the same object', function () {
+      var NamedHooks1 = NamedHooks('name'),
+          NamedHooks2 = NamedHooks('name');
 
       assert.equal(NamedHooks1, NamedHooks2);
     });
 
-    it('different namespaces return different objects', function () {
-      var NamedHooks1 = NamedHooks('namespace1'),
-          NamedHooks2 = NamedHooks('namespace2');
+    it('different `name`s return different objects', function () {
+      var NamedHooks1 = NamedHooks('name1'),
+          NamedHooks2 = NamedHooks('name2');
 
       assert.notEqual(NamedHooks1, NamedHooks2);
     });
