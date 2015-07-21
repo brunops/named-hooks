@@ -66,6 +66,14 @@ describe('NamedHooks', function () {
     });
   });
 
+  describe('#getPossibleHookNames(identifier)', function () {
+    it('returns empty Array if `identifier` is `undefined`', function () {
+      var namedHooks = NamedHooks('name');
+
+      assert.deepEqual(namedHooks.getPossibleHookNames(), []);
+    });
+  });
+
   describe('#defineHookResolutionRules(callback)', function () {
     it('sets `getPossibleHookNames` with `callback`', function () {
       var namedHooks = NamedHooks('name'),
