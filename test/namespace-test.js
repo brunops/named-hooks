@@ -30,6 +30,8 @@ describe('Namespace', function () {
 
     beforeEach(function () {
       folder = path.resolve('./test/namespace-mock-folder');
+
+      readdirSyncStub = sinon.stub(fs, 'readdirSync');
     });
 
     afterEach(function () {
@@ -37,6 +39,7 @@ describe('Namespace', function () {
     });
 
     it('`fs.readdirSync` is called on `folder`', function () {
+      fs.readdirSync.restore();
       var spy = sinon.spy(fs, 'readdirSync');
 
       namespace.load(folder);
@@ -45,15 +48,13 @@ describe('Namespace', function () {
     });
 
     it('throws an error if `folder` does not exist', function () {
-      var stub = sinon.stub(fs, 'readdirSync', fs.readdirSync);
-
       assert.throws(function () {
         namespace.load('./does-not-exist');
       }, Error);
     });
 
     it('`this.hooks` is empty if folder is empty', function () {
-      readdirSyncStub = sinon.stub(fs, 'readdirSync', curryReaddirSyncStubCb([]));
+      readdirSyncStub.returns([]);
 
       namespace.load(folder);
 
@@ -61,7 +62,7 @@ describe('Namespace', function () {
     });
 
     it('loads `file1.js` exported methods into `this.hooks`', function () {
-      readdirSyncStub = sinon.stub(fs, 'readdirSync', curryReaddirSyncStubCb([ 'file1.js' ]));
+      readdirSyncStub.returns([ 'file1.js' ]);
 
       namespace.load(folder);
 
@@ -69,7 +70,7 @@ describe('Namespace', function () {
     });
 
     it('loads `file1.js` and `file2.js` exported methods into `this.hooks`', function () {
-      readdirSyncStub = sinon.stub(fs, 'readdirSync', curryReaddirSyncStubCb([ 'file1.js', 'file2.js' ]));
+      readdirSyncStub.returns([ 'file1.js', 'file2.js' ]);
 
       namespace.load(folder);
 
@@ -77,11 +78,5 @@ describe('Namespace', function () {
     });
   });
 });
-
-function curryReaddirSyncStubCb(files) {
-  return function (path, callback) {
-    callback(null, files);
-  }
-}
 
 

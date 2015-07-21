@@ -63,7 +63,6 @@ describe('NamedHooks', function () {
       namedHooks1.init(path.resolve('./test/namespace-mock-folder'));
 
       assert.equal(spy.called, true);
-      console.log(namedHooks1.namespace.hooks)
     });
   });
 });
