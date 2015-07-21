@@ -6,7 +6,7 @@ var assert = require('assert'),
 var NamedHooks = require('..');
 
 describe('NamedHooks', function () {
-  var namespace;
+  var namedHooks;
 
   describe('require("named-hooks")', function () {
     it('returns a Function', function () {
@@ -16,21 +16,21 @@ describe('NamedHooks', function () {
 
   describe('NamedHooks(name)', function () {
     it('named constructor returns an object', function () {
-      namespace = NamedHooks('name');
+      namedHooks = NamedHooks('name');
 
-      assert.equal(typeof namespace, 'object');
+      assert.equal(typeof namedHooks, 'object');
     });
 
     it('`NamedHooks("myName")` object has `name` attribute set to "myName"', function () {
-      namespace = NamedHooks('myName');
+      namedHooks = NamedHooks('myName');
 
-      assert.equal(namespace.name, 'myName');
+      assert.equal(namedHooks.name, 'myName');
     });
 
     it('named constructor returns a `NamedHooks` object', function () {
-      namespace = NamedHooks('name');
+      namedHooks = NamedHooks('name');
 
-      assert.equal(namespace.constructor.name, 'NamedHooks');
+      assert.equal(namedHooks.constructor.name, 'NamedHooks');
     });
 
     it('throws an error if `name` is not a string', function () {
@@ -40,26 +40,26 @@ describe('NamedHooks', function () {
     });
 
     it('same `name` returns the same object', function () {
-      var NamedHooks1 = NamedHooks('name'),
-          NamedHooks2 = NamedHooks('name');
+      var namedHooks1 = NamedHooks('name'),
+          namedHooks2 = NamedHooks('name');
 
-      assert.equal(NamedHooks1, NamedHooks2);
+      assert.equal(namedHooks1, namedHooks2);
     });
 
     it('different `name`s return different objects', function () {
-      var NamedHooks1 = NamedHooks('name1'),
-          NamedHooks2 = NamedHooks('name2');
+      var namedHooks1 = NamedHooks('name1'),
+          namedHooks2 = NamedHooks('name2');
 
-      assert.notEqual(NamedHooks1, NamedHooks2);
+      assert.notEqual(namedHooks1, namedHooks2);
     });
   });
 
   describe('NamedHooks#init(folder)', function () {
     it('loads all hooks from all files of `folder` into `name` namespace', function () {
-      var NamedHooks1 = NamedHooks('name'),
-          spy = sinon.spy(NamedHooks1.namespace, 'load');
+      var namedHooks1 = NamedHooks('name'),
+          spy = sinon.spy(namedHooks1.namespace, 'load');
 
-      NamedHooks1.init('../namespace-mock-folder');
+      namedHooks1.init('../namespace-mock-folder');
 
       assert.equal(spy.called, true);
     });
