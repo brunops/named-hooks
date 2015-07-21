@@ -21,6 +21,12 @@ describe('NamedHooks', function () {
       assert.equal(typeof namespace, 'object');
     });
 
+    it('`NamedHooks("myName")` object has `name` attribute set to "myName"', function () {
+      namespace = NamedHooks('myName');
+
+      assert.equal(namespace.name, 'myName');
+    });
+
     it('named constructor returns a `NamedHooks` object', function () {
       namespace = NamedHooks('name');
 
