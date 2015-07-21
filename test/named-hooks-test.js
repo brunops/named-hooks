@@ -1,6 +1,7 @@
 'use strict';
 
-var assert = require('assert');
+var assert = require('assert'),
+    sinon = require('sinon');
 
 var NamedHooks = require('..');
 
@@ -20,10 +21,10 @@ describe('NamedHooks', function () {
       assert.equal(typeof namespace, 'object');
     });
 
-    it('namespaced constructor returns a `Namespace` object', function () {
-      namespace = NamedHooks('namespace');
+    it('named constructor returns a `NamedHooks` object', function () {
+      namespace = NamedHooks('name');
 
-      assert.equal(namespace.constructor.name, 'Namespace');
+      assert.equal(namespace.constructor.name, 'NamedHooks');
     });
 
     it('throws an error if `name` is not a string', function () {
@@ -44,6 +45,17 @@ describe('NamedHooks', function () {
           NamedHooks2 = NamedHooks('name2');
 
       assert.notEqual(NamedHooks1, NamedHooks2);
+    });
+  });
+
+  describe('NamedHooks#init(folder)', function () {
+    it('loads all hooks from all files of `folder` into `name` namespace', function () {
+      var NamedHooks1 = NamedHooks('name'),
+          spy = sinon.spy(NamedHooks1.namespace, 'load');
+
+      NamedHooks1.init('../namespace-mock-folder');
+
+      assert.equal(spy.called, true);
     });
   });
 });
