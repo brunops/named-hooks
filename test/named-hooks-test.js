@@ -66,12 +66,12 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('#defineRules(callback)', function () {
+  describe('#defineHookResolutionRules(callback)', function () {
     it('sets `getPossibleHookNames` with `callback`', function () {
       var namedHooks = NamedHooks('name'),
           getPossibleHookNames = function () {};
 
-      namedHooks.defineRules(getPossibleHookNames);
+      namedHooks.defineHookResolutionRules(getPossibleHookNames);
 
       assert.equal(namedHooks.getPossibleHookNames, getPossibleHookNames);
     });
