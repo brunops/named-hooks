@@ -55,7 +55,7 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('NamedHooks#init(folder)', function () {
+  describe('#init(folder)', function () {
     it('loads all hooks from all files of `folder` into `name` namespace', function () {
       var namedHooks1 = NamedHooks('name'),
           spy = sinon.spy(namedHooks1.namespace, 'load');
@@ -63,6 +63,17 @@ describe('NamedHooks', function () {
       namedHooks1.init(path.resolve('./test/namespace-mock-folder'));
 
       assert.equal(spy.called, true);
+    });
+  });
+
+  describe('#defineRules(callback)', function () {
+    it('sets `getPossibleHookNames` with `callback`', function () {
+      var namedHooks = NamedHooks('name'),
+          getPossibleHookNames = function () {};
+
+      namedHooks.defineRules(getPossibleHookNames);
+
+      assert.equal(namedHooks.getPossibleHookNames, getPossibleHookNames);
     });
   });
 });
