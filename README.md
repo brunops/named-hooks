@@ -69,6 +69,26 @@ myHooks.invoke('hook1', 'Flow1-v2', data);
 console.log(data); // { count: 3 }
 ```
 
+#API
+
+## `#init(folder)`
+Load all files from `folder` synchronously and populate hooks, you probably want to do this once.
+
+## `#getPossibleHookNames(hookName, identifier)`
+Returns an Array with all possible hook names defined by the combination of these arguments.
+
+## `#defineHookResolutionRules(callback)`
+If the order doesn't make sense to your project and you have other business rules, you can define your own way to resolve the hook names.
+
+## `#invoke(hookName, identifier, data1, ...)`
+Invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided.
+
+#Contributing
+Any PR is more than welcome, just make sure your stuff is tested and that all tests are passing.
+
+tl;dr
+`npm test` must be green and if I delete your code it should be red :)
+
 #License
 
 MIT
