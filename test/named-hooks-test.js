@@ -9,6 +9,10 @@ var NamedHooks = require('..');
 describe('NamedHooks', function () {
   var namedHooks;
 
+  beforeEach(function () {
+    namedHooks = new NamedHooks('name');
+  });
+
   describe('require("named-hooks")', function () {
     it('returns a Function', function () {
       assert.equal(typeof NamedHooks, 'function');
@@ -17,8 +21,6 @@ describe('NamedHooks', function () {
 
   describe('NamedHooks(name)', function () {
     it('named constructor returns an object', function () {
-      namedHooks = NamedHooks('name');
-
       assert.equal(typeof namedHooks, 'object');
     });
 
@@ -29,8 +31,6 @@ describe('NamedHooks', function () {
     });
 
     it('named constructor returns a `NamedHooks` object', function () {
-      namedHooks = NamedHooks('name');
-
       assert.equal(namedHooks.constructor.name, 'NamedHooks');
     });
 
@@ -68,40 +68,33 @@ describe('NamedHooks', function () {
 
   describe('#getPossibleHookNames(hookName, identifier)', function () {
     it('returns empty Array if `hookName` is `undefined`', function () {
-      var namedHooks = NamedHooks('name');
-
       assert.deepEqual(namedHooks.getPossibleHookNames(), []);
     });
 
     it('returns [ "hookName" ] if `identifier` is `undefined`', function () {
-      var namedHooks = NamedHooks('name');
-
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName'), [ 'hookName' ]);
     });
 
     it('returns [ "hookName", "hookNameID" ] if `identifier` is `ID`', function () {
-      var namedHooks = NamedHooks('name');
-
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID'), [ 'hookName', 'hookNameID' ]);
     });
 
     it('returns [ "hookName", "hookNameID", "hookNamefoo", "hookNameIDfoo" ] if `identifier` is `ID-foo`', function () {
-      var namedHooks = NamedHooks('name');
-
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo'), [ "hookName", "hookNameID", "hookNamefoo", "hookNameIDfoo" ]);
     });
 
     it('returns [ "hookName", "hookNameID", "hookNamefoo", "hookNamefoobar", "hookNameIDfoobar" ] if `identifier` is `ID-foo-bar`', function () {
-      var namedHooks = NamedHooks('name');
-
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo-bar'), [ "hookName", "hookNameID", "hookNamefoo", "hookNamebar", "hookNameIDfoobar" ]);
     });
   });
 
   describe('#defineHookResolutionRules(callback)', function () {
+    afterEach(function () {
+      delete namedHooks.getPossibleHookNames;
+    });
+
     it('sets `getPossibleHookNames` with `callback`', function () {
-      var namedHooks = NamedHooks('name'),
-          getPossibleHookNames = function () {};
+      var getPossibleHookNames = function () {};
 
       namedHooks.defineHookResolutionRules(getPossibleHookNames);
 
@@ -109,10 +102,9 @@ describe('NamedHooks', function () {
     });
 
     it('`#getPossibleHookNames` returns [ "hai" ] if `callback` returns [ "hai" ]', function () {
-      var namedHooks = NamedHooks('name'),
-          getPossibleHookNames = function () {
-            return [ 'hai' ];
-          };
+      var getPossibleHookNames = function () {
+        return [ 'hai' ];
+      };
 
       namedHooks.defineHookResolutionRules(getPossibleHookNames);
 
@@ -121,27 +113,12 @@ describe('NamedHooks', function () {
   });
 
   describe('#invoke(hookName, indentifier, data)', function () {
-    var getPossibleHookNamesStub;
-
-    beforeEach(function () {
-      namedHooks = NamedHooks('name');
-      getPossibleHookNamesStub = sinon.stub(namedHooks, 'getPossibleHookNames');
-    });
-
-    afterEach(function () {
-      namedHooks.getPossibleHookNames.restore();
-    });
-
     it('invokes `hook1` hook returned by `#getPossibleHookNames(hookName, identifier)`', function () {
       var spyHook1 = sinon.spy();
 
       namedHooks.namespace.hooks = {
         hook1: spyHook1
       };
-
-      getPossibleHookNamesStub.returns([
-        'hook1'
-      ]);
 
       namedHooks.invoke('hook1', 'id');
 
@@ -156,11 +133,6 @@ describe('NamedHooks', function () {
         hook1: spyHook1,
         hook1file1: spyHook1File1
       };
-
-      getPossibleHookNamesStub.returns([
-        'hook1',
-        'hook1file1'
-      ]);
 
       namedHooks.invoke('hook1', 'file1');
 
@@ -177,19 +149,16 @@ describe('NamedHooks', function () {
         }
       };
 
-      getPossibleHookNamesStub.returns([
-        'hook1'
-      ]);
-
       namedHooks.invoke('hook1', 'foo', data);
 
       assert.equal(data.count, 1);
     });
 
     it('invokes `hook1`, `hook1file1` hooks with same data for `#invoke("hook1", "file1foo", {})`', function () {
+      var namedHooks1 = new NamedHooks('name1');
       var data = { count: 0 };
 
-      namedHooks.namespace.hooks = {
+      namedHooks1.namespace.hooks = {
         hook1: function (data) {
           data.count += 1;
         },
@@ -199,12 +168,7 @@ describe('NamedHooks', function () {
         }
       };
 
-      getPossibleHookNamesStub.returns([
-        'hook1',
-        'hook1foo'
-      ]);
-
-      namedHooks.invoke('hook1', 'foo', data);
+      namedHooks1.invoke('hook1', 'foo', data);
 
       assert.equal(data.count, 6);
     });
