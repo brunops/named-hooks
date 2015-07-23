@@ -172,7 +172,27 @@ describe('NamedHooks', function () {
       assert.equal(data.count, 6);
     });
 
+    it('`#invoke("hook1", "file1-foo", data1, data2)` invokes hooks with both params', function () {
+      var data1 = { count: 0 },
+          data2 = { count: 10 };
 
+      namedHooks.namespace.hooks = {
+        hook1: function (data1, data2) {
+          data1.count += 1;
+          data2.count -= 1;
+        },
+
+        hook1file1foo: function (data1, data2) {
+          data1.count += 5;
+          data2.count -= 5;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'file1-foo', data1, data2);
+
+      assert.equal(data1.count, 6);
+      assert.equal(data2.count, 4);
+    });
   });
 });
 
