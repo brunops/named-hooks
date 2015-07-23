@@ -86,8 +86,7 @@ Invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that 
 #Contributing
 Any PR is more than welcome, just make sure your stuff is tested and that all tests are passing.
 
-tl;dr
-`npm test` must be green and if I delete your code it should be red :)
+**tl;dr**: `npm test` must be green and if I delete your code it should be red :)
 
 #License
 
