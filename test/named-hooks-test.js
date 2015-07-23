@@ -154,7 +154,7 @@ describe('NamedHooks', function () {
       assert.equal(data.count, 1);
     });
 
-    it('invokes `hook1`, `hook1file1` hooks with same data for `#invoke("hook1", "file1foo", {})`', function () {
+    it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function () {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
@@ -162,12 +162,12 @@ describe('NamedHooks', function () {
           data.count += 1;
         },
 
-        hook1foo: function (data) {
+        hook1file1foo: function (data) {
           data.count += 5;
         }
       };
 
-      namedHooks.invoke('hook1', 'foo', data);
+      namedHooks.invoke('hook1', 'file1-foo', data);
 
       assert.equal(data.count, 6);
     });
