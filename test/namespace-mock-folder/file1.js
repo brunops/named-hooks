@@ -1,3 +1,3 @@
 module.exports = {
-  hook1File1: function () {}
+  hook1file1: function () {}
 };

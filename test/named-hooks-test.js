@@ -95,7 +95,7 @@ describe('NamedHooks', function () {
       var namedHooks = NamedHooks('name');
 
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo-bar'), [ "hookName", "hookNameID", "hookNamefoo", "hookNamebar", "hookNameIDfoobar" ]);
-    });    
+    });
   });
 
   describe('#defineHookResolutionRules(callback)', function () {
@@ -117,6 +117,35 @@ describe('NamedHooks', function () {
       namedHooks.defineHookResolutionRules(getPossibleHookNames);
 
       assert.deepEqual(namedHooks.getPossibleHookNames(), [ 'hai' ]);
+    });
+  });
+
+  describe('#invoke(hookName, indentifier, data)', function () {
+    var getPossibleHookNamesStub;
+
+    beforeEach(function () {
+      namedHooks = NamedHooks('name');
+      getPossibleHookNamesStub = sinon.stub(namedHooks, 'getPossibleHookNames');
+    });
+
+    afterEach(function () {
+      namedHooks.getPossibleHookNames.restore();
+    });
+
+    it('invokes hookName hook returned by `#getPossibleHookNames(hookName, identifier)`', function () {
+      var spyHook1 = sinon.spy();
+
+      namedHooks.namespace.hooks = {
+        'hook1': spyHook1
+      };
+
+      getPossibleHookNamesStub.returns([
+        'hook1'
+      ]);
+
+      namedHooks.invoke('hook1', 'id');
+
+      assert.equal(spyHook1.called, true);
     });
   });
 });

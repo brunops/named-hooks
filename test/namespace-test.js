@@ -66,7 +66,7 @@ describe('Namespace', function () {
 
       namespace.load(folder);
 
-      assert.equal(typeof namespace.hooks.hook1File1, 'function');
+      assert.equal(typeof namespace.hooks.hook1file1, 'function');
     });
 
     it('loads `file1.js` and `file2.js` exported methods into `this.hooks`', function () {
