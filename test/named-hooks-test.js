@@ -132,7 +132,7 @@ describe('NamedHooks', function () {
       namedHooks.getPossibleHookNames.restore();
     });
 
-    it('invokes hookName hook returned by `#getPossibleHookNames(hookName, identifier)`', function () {
+    it('invokes `hook1` hook returned by `#getPossibleHookNames(hookName, identifier)`', function () {
       var spyHook1 = sinon.spy();
 
       namedHooks.namespace.hooks = {
@@ -146,6 +146,26 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'id');
 
       assert.equal(spyHook1.called, true);
+    });
+
+    it('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function () {
+      var spyHook1 = sinon.spy(),
+          spyHook1File1 = sinon.spy();
+
+      namedHooks.namespace.hooks = {
+        'hook1': spyHook1,
+        'hook1file1': spyHook1File1
+      };
+
+      getPossibleHookNamesStub.returns([
+        'hook1',
+        'hook1file1'
+      ]);
+
+      namedHooks.invoke('hook1', 'file1');
+
+      assert.equal(spyHook1.called, true);
+      assert.equal(spyHook1File1.called, true);
     });
   });
 });
