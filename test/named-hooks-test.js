@@ -78,6 +78,12 @@ describe('NamedHooks', function () {
 
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName'), [ 'hookName' ]);
     });
+
+    it('returns [ "hookName", "hookNameID" ] if `identifier` is `ID`', function () {
+      var namedHooks = NamedHooks('name');
+
+      assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID'), [ 'hookName', 'hookNameID' ]);
+    });
   });
 
   describe('#defineHookResolutionRules(callback)', function () {
