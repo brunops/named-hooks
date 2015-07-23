@@ -107,6 +107,17 @@ describe('NamedHooks', function () {
 
       assert.equal(namedHooks.getPossibleHookNames, getPossibleHookNames);
     });
+
+    it('`#getPossibleHookNames` returns [ "hai" ] if `callback` returns [ "hai" ]', function () {
+      var namedHooks = NamedHooks('name'),
+          getPossibleHookNames = function () {
+            return [ 'hai' ];
+          };
+
+      namedHooks.defineHookResolutionRules(getPossibleHookNames);
+
+      assert.deepEqual(namedHooks.getPossibleHookNames(), [ 'hai' ]);
+    });
   });
 });
 
