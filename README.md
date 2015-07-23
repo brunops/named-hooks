@@ -7,8 +7,9 @@ Allow hooks to be defined and invoked in order based on its names.
 By default, `named-hooks` use filenames and `-` as delimiters to define hook invoke order.
 
 Inside `./hooks/`
-// master.js
+
 ``` js
+// master.js
 module.exports = {
   hook1: function (data) {
     // manipulate `data`
@@ -22,8 +23,8 @@ module.exports = {
   // as many other hooks as you want
 };
 ```
-// Flow1.js
 ``` js
+// Flow1.js
 module.exports = {
   hook1Flow1: function (data) {
     // manipulate `data`
@@ -34,8 +35,8 @@ module.exports = {
 };
 ```
 
-// Flow1-v2.js
 ``` js
+// Flow1-v2.js
 module.exports = {
   hook1Flow1v2: function (data) {
     // manipulate `data`
