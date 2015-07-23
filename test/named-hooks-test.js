@@ -155,10 +155,9 @@ describe('NamedHooks', function () {
     });
 
     it('invokes `hook1`, `hook1file1` hooks with same data for `#invoke("hook1", "file1foo", {})`', function () {
-      var namedHooks1 = new NamedHooks('name1');
       var data = { count: 0 };
 
-      namedHooks1.namespace.hooks = {
+      namedHooks.namespace.hooks = {
         hook1: function (data) {
           data.count += 1;
         },
@@ -168,7 +167,7 @@ describe('NamedHooks', function () {
         }
       };
 
-      namedHooks1.invoke('hook1', 'foo', data);
+      namedHooks.invoke('hook1', 'foo', data);
 
       assert.equal(data.count, 6);
     });
