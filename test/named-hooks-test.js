@@ -84,6 +84,18 @@ describe('NamedHooks', function () {
 
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID'), [ 'hookName', 'hookNameID' ]);
     });
+
+    it('returns [ "hookName", "hookNameID", "hookNamefoo", "hookNameIDfoo" ] if `identifier` is `ID-foo`', function () {
+      var namedHooks = NamedHooks('name');
+
+      assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo'), [ "hookName", "hookNameID", "hookNamefoo", "hookNameIDfoo" ]);
+    });
+
+    it('returns [ "hookName", "hookNameID", "hookNamefoo", "hookNamefoobar", "hookNameIDfoobar" ] if `identifier` is `ID-foo-bar`', function () {
+      var namedHooks = NamedHooks('name');
+
+      assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo-bar'), [ "hookName", "hookNameID", "hookNamefoo", "hookNamebar", "hookNameIDfoobar" ]);
+    });    
   });
 
   describe('#defineHookResolutionRules(callback)', function () {
