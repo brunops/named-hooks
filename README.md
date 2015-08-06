@@ -14,6 +14,9 @@ module.exports = {
   hook1: function (data) {
     // manipulate `data`
     data.count += 1;
+
+    // return new `data`
+    return data;
   },
 
   hook2: function (data1, data2) {
@@ -29,6 +32,9 @@ module.exports = {
   hook1Flow1: function (data) {
     // manipulate `data`
     data.count += 1;
+
+    // return new `data`
+    return data;
   }
 
   // ...
@@ -41,6 +47,9 @@ module.exports = {
   hook1Flow1v2: function (data) {
     // manipulate `data`
     data.count += 1;
+
+    // return new `data`
+    return data;
   }
 
   // ...
@@ -64,9 +73,10 @@ var data = {
 //      1. 'hook1'
 //      2. 'hook1Flow1'
 //      3. 'hook1Flow1v2'
-myHooks.invoke('hook1', 'Flow1-v2', data);
+var newData = myHooks.invoke('hook1', 'Flow1-v2', data);
 
-console.log(data); // { count: 3 }
+console.log(data); // { count: 0 }
+console.log(newData); // { count: 3 }
 ```
 
 #API
@@ -81,7 +91,7 @@ Returns an Array with all possible hook names defined by the combination of thes
 If the order doesn't make sense to your project and you have other business rules, you can define your own way to resolve the hook names.
 
 #### `#invoke(hookName, identifier, data1, ...)`
-Invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided.
+Invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided. Arguments are passed by value, so each hook needs to return the new modified value.
 
 #Contributing
 Any PR is more than welcome, just make sure your stuff is tested and that all tests are passing.

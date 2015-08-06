@@ -218,8 +218,5 @@ describe('NamedHooks', function () {
 
       assert.equal(result.count, 6);
     });
-
   });
 });
-
-
