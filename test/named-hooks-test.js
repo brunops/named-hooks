@@ -181,59 +181,44 @@ describe('NamedHooks', function () {
       assert.equal(result.nested.hey, 6);
     });
 
-    xit('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function () {
+    it('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function () {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
         hook1: function (data) {
           data.count += 1;
+
+          return data;
         }
       };
 
-      namedHooks.invoke('hook1', 'foo', data);
+      var result = namedHooks.invoke('hook1', 'foo', data);
 
-      assert.equal(data.count, 1);
+      assert.equal(result.count, 1);
     });
 
-    xit('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function () {
+    it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function () {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
         hook1: function (data) {
           data.count += 1;
+
+          return data;
         },
 
         hook1file1foo: function (data) {
           data.count += 5;
+
+          return data;
         }
       };
 
-      namedHooks.invoke('hook1', 'file1-foo', data);
+      var result = namedHooks.invoke('hook1', 'file1-foo', data);
 
-      assert.equal(data.count, 6);
+      assert.equal(result.count, 6);
     });
 
-    xit('`#invoke("hook1", "file1-foo", data1, data2)` invokes hooks with both params', function () {
-      var data1 = { count: 0 },
-          data2 = { count: 10 };
-
-      namedHooks.namespace.hooks = {
-        hook1: function (data1, data2) {
-          data1.count += 1;
-          data2.count -= 1;
-        },
-
-        hook1file1foo: function (data1, data2) {
-          data1.count += 5;
-          data2.count -= 5;
-        }
-      };
-
-      namedHooks.invoke('hook1', 'file1-foo', data1, data2);
-
-      assert.equal(data1.count, 6);
-      assert.equal(data2.count, 4);
-    });
   });
 });
 
