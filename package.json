@@ -28,5 +28,8 @@
   "homepage": "https://github.com/brunops/named-hooks",
   "devDependencies": {
     "sinon": "^1.15.4"
+  },
+  "dependencies": {
+    "lodash.clonedeep": "^3.0.2"
   }
 }
