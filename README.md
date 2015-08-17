@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/brunops/named-hooks.svg)](https://travis-ci.org/brunops/named-hooks)
+
 #named-hooks
 
 Allow hooks to be defined and invoked in order based on its names.
