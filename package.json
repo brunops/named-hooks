@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/brunops/named-hooks",
   "devDependencies": {
+    "mocha": "^2.2.5",
     "sinon": "^1.15.4"
   },
   "dependencies": {
