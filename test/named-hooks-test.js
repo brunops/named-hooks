@@ -249,7 +249,7 @@ describe('NamedHooks', function () {
           assert.equal(result, 0);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
 
     xit('invokes `hook1` when `hookName` is "hook1"', function (done) {
@@ -264,7 +264,7 @@ describe('NamedHooks', function () {
           assert.equal(spyHook1.called, true);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
 
     xit('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function (done) {
@@ -282,7 +282,7 @@ describe('NamedHooks', function () {
           assert.equal(spyHook1File1.called, true);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
 
     xit('hooks do not modify original `data` object', function (done) {
@@ -301,7 +301,7 @@ describe('NamedHooks', function () {
           assert.equal(data.count, 0);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
 
     xit('hooks do not modify original `data` object or nested objects (deepClone)', function (done) {
@@ -329,7 +329,7 @@ describe('NamedHooks', function () {
           assert.equal(result.nested.hey, 6);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
 
     xit('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function (done) {
@@ -348,7 +348,7 @@ describe('NamedHooks', function () {
           assert.equal(result.count, 1);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
 
     xit('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function (done) {
@@ -373,7 +373,7 @@ describe('NamedHooks', function () {
           assert.equal(result.count, 6);
           done();
         })
-        .then(null, errHandler.bind(null, done));
+        .catch(errHandler.bind(null, done));
     });
   });
 });
