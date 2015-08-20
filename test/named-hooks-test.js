@@ -112,7 +112,7 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('#invoke(hookName, indentifier, data)', function () {
+  describe('#invokeSync(hookName, indentifier, data)', function () {
     it('invokes `hook1` hook returned by `#getPossibleHookNames(hookName, identifier)`', function () {
       var spyHook1 = sinon.spy();
 
@@ -120,12 +120,12 @@ describe('NamedHooks', function () {
         hook1: spyHook1
       };
 
-      namedHooks.invoke('hook1', 'id');
+      namedHooks.invokeSync('hook1', 'id');
 
       assert.equal(spyHook1.called, true);
     });
 
-    it('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function () {
+    it('invokes `hook1` and `hook1file1` hooks for `#invokeSync("hook1", "file1")`', function () {
       var spyHook1 = sinon.spy(),
           spyHook1File1 = sinon.spy();
 
@@ -134,7 +134,7 @@ describe('NamedHooks', function () {
         hook1file1: spyHook1File1
       };
 
-      namedHooks.invoke('hook1', 'file1');
+      namedHooks.invokeSync('hook1', 'file1');
 
       assert.equal(spyHook1.called, true);
       assert.equal(spyHook1File1.called, true);
@@ -151,7 +151,7 @@ describe('NamedHooks', function () {
         }
       };
 
-      namedHooks.invoke('hook1', 'foo', data);
+      namedHooks.invokeSync('hook1', 'foo', data);
 
       assert.equal(data.count, 0);
     });
@@ -174,14 +174,14 @@ describe('NamedHooks', function () {
         }
       };
 
-      var result = namedHooks.invoke('hook1', 'foo', data);
+      var result = namedHooks.invokeSync('hook1', 'foo', data);
 
       assert.equal(data.nested.hey, 5);
       assert.equal(obj.hey, 5);
       assert.equal(result.nested.hey, 6);
     });
 
-    it('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function () {
+    it('invokes `hook1` with `data` for `#invokeSync("hook1", "foo", {})`', function () {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
@@ -192,12 +192,12 @@ describe('NamedHooks', function () {
         }
       };
 
-      var result = namedHooks.invoke('hook1', 'foo', data);
+      var result = namedHooks.invokeSync('hook1', 'foo', data);
 
       assert.equal(result.count, 1);
     });
 
-    it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function () {
+    it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invokeSync("hook1", "file1-foo", {})`', function () {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
@@ -214,7 +214,7 @@ describe('NamedHooks', function () {
         }
       };
 
-      var result = namedHooks.invoke('hook1', 'file1-foo', data);
+      var result = namedHooks.invokeSync('hook1', 'file1-foo', data);
 
       assert.equal(result.count, 6);
     });
