@@ -269,6 +269,63 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
+    it('sync and async hooks can be mixed', function (done) {
+      var data = 2;
+
+      namedHooks.namespace.hooks = {
+        // async hook
+        hook1: function (data, resolve) {
+          // make sure it executes on next loop
+          setImmediate(resolve, 0);
+        },
+
+        // sync hook
+        hook1file1: function (data) {
+          return data + 1;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'file1', data)
+        .then(function (result) {
+          assert.equal(result, 1);
+          done();
+        })
+        .catch(errHandler.bind(null, done));
+    });
+
+    it('sync and async hooks can be mixed, like, a lot', function (done) {
+      var data = 2;
+
+      namedHooks.namespace.hooks = {
+        // sync hook
+        hook1: function (data) {
+          return data + 1;
+        },
+
+        // async hook
+        hook1file1: function (data, resolve) {
+          setImmediate(resolve, 0);
+        },
+
+        // sync hook 2
+        hook1foo: function (data) {
+          return data + 6;
+        },
+
+        // async hook 3
+        hook1bar: function (data, resolve) {
+          setImmediate(resolve, data + 1);
+        },
+      };
+
+      namedHooks.invoke('hook1', 'file1-foo-bar', data)
+        .then(function (result) {
+          assert.equal(result, 7);
+          done();
+        })
+        .catch(errHandler.bind(null, done));
+    });
+
     xit('invokes `hook1` when `hookName` is "hook1"', function (done) {
       var spyHook1 = sinon.spy();
 
