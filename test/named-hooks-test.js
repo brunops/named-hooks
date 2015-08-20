@@ -219,4 +219,161 @@ describe('NamedHooks', function () {
       assert.equal(result.count, 6);
     });
   });
+
+  describe('#invoke(hookName, indentifier, data)', function () {
+    var errHandler;
+
+    beforeEach(function () {
+      errHandler = function errHandler(done, err) {
+        done(err);
+      };
+    });
+
+    it('returns a promise', function () {
+      var invokeReturn = namedHooks.invoke('hookName', 'foo', 3);
+
+      assert.equal(typeof invokeReturn.then, 'function');
+    });
+
+    it('hooks defined with two arguments take a `resolve` callback to fulfill a promise', function (done) {
+      var data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, resolve) {
+          resolve(0);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data)
+        .then(function (result) {
+          assert.equal(result, 0);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+
+    xit('invokes `hook1` when `hookName` is "hook1"', function (done) {
+      var spyHook1 = sinon.spy();
+
+      namedHooks.namespace.hooks = {
+        hook1: spyHook1
+      };
+
+      namedHooks.invoke('hook1', 'id')
+        .then(function () {
+          assert.equal(spyHook1.called, true);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+
+    xit('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function (done) {
+      var spyHook1 = sinon.spy(),
+          spyHook1File1 = sinon.spy();
+
+      namedHooks.namespace.hooks = {
+        hook1: spyHook1,
+        hook1file1: spyHook1File1
+      };
+
+      namedHooks.invoke('hook1', 'file1')
+        .then(function () {
+          assert.equal(spyHook1.called, true);
+          assert.equal(spyHook1File1.called, true);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+
+    xit('hooks do not modify original `data` object', function (done) {
+      var data = {
+        count: 0
+      };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data) {
+          data.count += 1;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'foo', data)
+        .then(function (result) {
+          assert.equal(data.count, 0);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+
+    xit('hooks do not modify original `data` object or nested objects (deepClone)', function (done) {
+      var obj = {
+          hey: 5
+        },
+
+        data = {
+          count: 0,
+          nested: obj
+        };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data) {
+          data.nested.hey += 1;
+
+          return data;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'foo', data)
+        .then(function (result) {
+          assert.equal(data.nested.hey, 5);
+          assert.equal(obj.hey, 5);
+          assert.equal(result.nested.hey, 6);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+
+    xit('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function (done) {
+      var data = { count: 0 };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data) {
+          data.count += 1;
+
+          return data;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'foo', data)
+        .then(function (result) {
+          assert.equal(result.count, 1);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+
+    xit('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function (done) {
+      var data = { count: 0 };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data) {
+          data.count += 1;
+
+          return data;
+        },
+
+        hook1file1foo: function (data) {
+          data.count += 5;
+
+          return data;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'file1-foo', data)
+        .then(function (result) {
+          assert.equal(result.count, 6);
+          done();
+        })
+        .then(null, errHandler.bind(null, done));
+    });
+  });
 });
