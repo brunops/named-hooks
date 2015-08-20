@@ -235,6 +235,23 @@ describe('NamedHooks', function () {
       assert.equal(typeof invokeReturn.then, 'function');
     });
 
+    it('hooks defined with one argument can transform `data` and return it', function (done) {
+      var data = 1;
+
+      namedHooks.namespace.hooks = {
+        sync: function (data) {
+          return data + 2;
+        }
+      };
+
+      namedHooks.invoke('sync', 'foo', data)
+        .then(function (result) {
+          assert.equal(result, 3);
+          done();
+        })
+        .catch(errHandler.bind(null, done));
+    });
+
     it('hooks defined with two arguments take a `resolve` callback to fulfill a promise', function (done) {
       var data = 5;
 
