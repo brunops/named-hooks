@@ -326,7 +326,7 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
-    xit('invokes `hook1` when `hookName` is "hook1"', function (done) {
+    it('invokes `hook1` when `hookName` is "hook1"', function (done) {
       var spyHook1 = sinon.spy();
 
       namedHooks.namespace.hooks = {
@@ -341,7 +341,7 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
-    xit('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function (done) {
+    it('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function (done) {
       var spyHook1 = sinon.spy(),
           spyHook1File1 = sinon.spy();
 
@@ -359,7 +359,7 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
-    xit('hooks do not modify original `data` object', function (done) {
+    it('hooks do not modify original `data` object', function (done) {
       var data = {
         count: 0
       };
@@ -378,7 +378,7 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
-    xit('hooks do not modify original `data` object or nested objects (deepClone)', function (done) {
+    it('hooks do not modify original `data` object or nested objects (deepClone)', function (done) {
       var obj = {
           hey: 5
         },
@@ -406,7 +406,7 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
-    xit('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function (done) {
+    it('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function (done) {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
@@ -425,7 +425,7 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
-    xit('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function (done) {
+    it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function (done) {
       var data = { count: 0 };
 
       namedHooks.namespace.hooks = {
