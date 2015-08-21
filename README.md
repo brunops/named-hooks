@@ -83,14 +83,14 @@ var data = {
 //      3. 'hook1Flow1v2'
 myHooks.invoke('hook1', 'Flow1-v2', data).then(function (result) {
   console.log(data);    // { count: 0 }
-  console.log(newData); // { count: 3 }
+  console.log(newData); // { count: 2 }
 });
 ```
 
 #API
 
 #### `#init(folder)`
-Load all files from `folder` synchronously and populate hooks, you probably want to do this once.
+Load all files from `folder` synchronously and populate hooks, you'll probably do this only once.
 
 #### `#getPossibleHookNames(hookName, identifier)`
 Returns an Array with all possible hook names defined by the combination of these arguments.
