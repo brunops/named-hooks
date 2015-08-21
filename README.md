@@ -83,7 +83,7 @@ var data = {
 //      3. 'hook1Flow1v2'
 myHooks.invoke('hook1', 'Flow1-v2', data).then(function (result) {
   console.log(data);    // { count: 0 }
-  console.log(newData); // { count: 2 }
+  console.log(newData); // { count: 3 }
 });
 ```
 
