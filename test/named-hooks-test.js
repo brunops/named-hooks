@@ -2,7 +2,8 @@
 
 var assert = require('assert'),
     path = require('path'),
-    sinon = require('sinon');
+    sinon = require('sinon'),
+    q = require('q');
 
 var NamedHooks = require('..');
 
@@ -326,6 +327,12 @@ describe('NamedHooks', function () {
         .catch(errHandler.bind(null, done));
     });
 
+    it('returns a function if called with only two parameters', function () {
+      var returnedValue = namedHooks.invoke('hook1', 'id');
+
+      assert.equal(typeof returnedValue, 'function');
+    });
+
     it('invokes `hook1` when `hookName` is "hook1"', function (done) {
       var spyHook1 = sinon.spy();
 
@@ -333,7 +340,7 @@ describe('NamedHooks', function () {
         hook1: spyHook1
       };
 
-      namedHooks.invoke('hook1', 'id')
+      namedHooks.invoke('hook1', 'id', {})
         .then(function () {
           assert.equal(spyHook1.called, true);
           done();
@@ -350,7 +357,7 @@ describe('NamedHooks', function () {
         hook1file1: spyHook1File1
       };
 
-      namedHooks.invoke('hook1', 'file1')
+      namedHooks.invoke('hook1', 'file1', '')
         .then(function () {
           assert.equal(spyHook1.called, true);
           assert.equal(spyHook1File1.called, true);
@@ -448,6 +455,26 @@ describe('NamedHooks', function () {
           done();
         })
         .catch(errHandler.bind(null, done));
+    });
+
+    it('can be used inside a promise chain', function (done) {
+      namedHooks.namespace.hooks = {
+        hook1: function (data, resolve) {
+          setImmediate(resolve, data + 60);
+        },
+
+        hook1file1: function (data) {
+          return data + 6;
+        }
+      };
+
+      q(600)
+        .then(namedHooks.invoke('hook1', 'file1' /*, prevData */))
+        .then(function (result) {
+          assert.equal(result, 666);
+          done();
+        })
+        .catch(errHandler.bind(null, done))
     });
   });
 });
