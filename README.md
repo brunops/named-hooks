@@ -102,7 +102,7 @@ If the order doesn't make sense to your project and you have other business rule
 Use `invoke` if any hook is async, it returns a promise with the transformed data. It'll invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided. Arguments are passed by value, so each hook needs to return the new modified value if synchronous or resolve the promise if asynchronous.
 
 ### `#invoke(hookName, identifier)`
-Returns a transform function that will resolve a promise chain. It's an utility function to be able to do
+Utility method. It returns a transform function that will resolve a promise chain.
 ``` js
 // master.js
 module.exports = {
@@ -112,17 +112,17 @@ module.exports = {
   }
 };
 ```
-
+It exists so it's possible to do:
 ``` js
   // example using `q` module for promises, it'll work with
   // any promise implementation that complies with A+
   q(5)
-    .then(namedHooks.invoke('hookName', 'indentifier'))
+    .then(namedHooks.invoke('hookName', 'indentifier' /*, prevData */))
     .then(console.log);
 
   // outputs `10`
 ```
-as opposed to crazy bindins:
+as opposed to crazy bindings:
 ``` js
   // works the exact same way, but looks cryptic..
   q(5)
