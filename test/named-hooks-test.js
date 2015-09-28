@@ -222,14 +222,6 @@ describe('NamedHooks', function () {
   });
 
   describe('#invoke(hookName, indentifier, data)', function () {
-    var errHandler;
-
-    beforeEach(function () {
-      errHandler = function errHandler(done, err) {
-        done(err);
-      };
-    });
-
     it('returns a promise', function () {
       var invokeReturn = namedHooks.invoke('hookName', 'foo', 3);
 
@@ -248,9 +240,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('sync', 'foo', data)
         .then(function (result) {
           assert.equal(result, 3);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('hooks defined with two arguments take a `resolve` callback to fulfill a promise', function (done) {
@@ -265,9 +256,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('async', 'file1', data)
         .then(function (result) {
           assert.equal(result, 0);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('sync and async hooks can be mixed', function (done) {
@@ -289,9 +279,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'file1', data)
         .then(function (result) {
           assert.equal(result, 1);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('sync and async hooks can be mixed, like, a lot', function (done) {
@@ -322,9 +311,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'file1-foo-bar', data)
         .then(function (result) {
           assert.equal(result, 7);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('returns a function if called with only two parameters', function () {
@@ -343,9 +331,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'id', {})
         .then(function () {
           assert.equal(spyHook1.called, true);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function (done) {
@@ -361,9 +348,8 @@ describe('NamedHooks', function () {
         .then(function () {
           assert.equal(spyHook1.called, true);
           assert.equal(spyHook1File1.called, true);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('hooks do not modify original `data` object', function (done) {
@@ -380,9 +366,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'foo', data)
         .then(function (result) {
           assert.equal(data.count, 0);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('hooks do not modify original `data` object or nested objects (deepClone)', function (done) {
@@ -408,9 +393,8 @@ describe('NamedHooks', function () {
           assert.equal(data.nested.hey, 5);
           assert.equal(obj.hey, 5);
           assert.equal(result.nested.hey, 6);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function (done) {
@@ -427,9 +411,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'foo', data)
         .then(function (result) {
           assert.equal(result.count, 1);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function (done) {
@@ -452,9 +435,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'file1-foo', data)
         .then(function (result) {
           assert.equal(result.count, 6);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('can be used inside a promise chain', function (done) {
