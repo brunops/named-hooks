@@ -315,12 +315,6 @@ describe('NamedHooks', function () {
         .done(done);
     });
 
-    it('returns a function if called with only two parameters', function () {
-      var returnedValue = namedHooks.invoke('hook1', 'id');
-
-      assert.equal(typeof returnedValue, 'function');
-    });
-
     it('invokes `hook1` when `hookName` is "hook1"', function (done) {
       var spyHook1 = sinon.spy();
 
@@ -438,6 +432,14 @@ describe('NamedHooks', function () {
         })
         .done(done);
     });
+  });
+
+  describe('#invokeChain(hookName, identifier, params)', function () {
+    it('returns a function', function () {
+      var returnedValue = namedHooks.invokeChain('hook1', 'id');
+
+      assert.equal(typeof returnedValue, 'function');
+    });
 
     it('can be used inside a promise chain', function (done) {
       namedHooks.namespace.hooks = {
@@ -451,12 +453,11 @@ describe('NamedHooks', function () {
       };
 
       q(600)
-        .then(namedHooks.invoke('hook1', 'file1' /*, prevData */))
+        .then(namedHooks.invokeChain('hook1', 'file1'))
         .then(function (result) {
           assert.equal(result, 666);
-          done();
         })
-        .catch(errHandler.bind(null, done))
+        .done(done);
     });
   });
 });
