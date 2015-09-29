@@ -14,7 +14,7 @@ Inside `./hooks/`
 // master.js
 module.exports = {
   // sync hook
-  hook1: function (data) {
+  hook1: function (data/*, context */) {
     // manipulate `data`
     data.count += 1;
 
@@ -23,9 +23,15 @@ module.exports = {
   },
 
   // async hooks take a `resolve` parameter
-  hook2: function (data1, resolve) {
-    // manipulate `data1`
-    resolve(data1);
+  hook2: function (data, context, resolve) {
+    // manipulate `data`
+    resolve(data);
+  },
+
+  // async hooks take a `reject` parameter too
+  hook3: function (data, context, resolve, reject) {
+    // manipulate `data`
+    reject(data);
   }
 
   // as many other hooks as you want
@@ -49,7 +55,7 @@ module.exports = {
 ``` js
 // Flow1-v2.js
 module.exports = {
-  hook1Flow1v2: function (data, resolve) {
+  hook1Flow1v2: function (data, context, resolve) {
     // make an async operation, like calling a service
     setTimeout(function () {
       // manipulate `data` after response
@@ -81,7 +87,7 @@ var data = {
 //      1. 'hook1'
 //      2. 'hook1Flow1'
 //      3. 'hook1Flow1v2'
-myHooks.invoke('hook1', 'Flow1-v2', data).then(function (result) {
+myHooks.invoke('hook1', 'Flow1-v2', data/*, context*/).then(function (result) {
   console.log(data);    // { count: 0 }
   console.log(newData); // { count: 3 }
 });
@@ -98,35 +104,27 @@ Returns an Array with all possible hook names defined by the combination of thes
 #### `#defineHookResolutionRules(callback)`
 If the order doesn't make sense to your project and you have other business rules, you can define your own way to resolve the hook names.
 
-#### `#invoke(hookName, identifier, data)`
+#### `#invoke(hookName, identifier, data, context)`
 Use `invoke` if any hook is async, it returns a promise with the transformed data. It'll invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided. Arguments are passed by value, so each hook needs to return the new modified value if synchronous or resolve the promise if asynchronous.
 
-### `#invoke(hookName, identifier)`
-Utility method. It returns a transform function that will resolve a promise chain.
+### `#invokeChain(hookName, identifier, context)`
+Returns a transform function that will resolve a promise chain. `context` is a way to make local variables available to hook implementations, it's optional.
 ``` js
 // master.js
 module.exports = {
   // async hook
-  hookName: function (data, resolve) {
+  hookName: function (data, context, resolve, reject) {
+    console.log(context.foo); // 'bar'
     setTimeout(resolve, 1000, data + 5);
   }
 };
 ```
-It exists so it's possible to do:
+In the middle of a promise chain:
 ``` js
   // example using `q` module for promises, it'll work with
   // any promise implementation that complies with A+
   q(5)
-    .then(namedHooks.invoke('hookName', 'indentifier' /*, prevData */))
-    .then(console.log);
-
-  // outputs `10`
-```
-as opposed to crazy bindings:
-``` js
-  // works the exact same way, but looks cryptic..
-  q(5)
-    .then(namedHooks.invoke.bind(namedHooks, 'hookName', 'indentifier'))
+    .then(namedHooks.invoke('hookName', 'indentifier', { foo: 'bar' }))
     .then(console.log);
 
   // outputs `10`
