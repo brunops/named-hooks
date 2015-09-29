@@ -88,8 +88,8 @@ var data = {
 //      2. 'hook1Flow1'
 //      3. 'hook1Flow1v2'
 myHooks.invoke('hook1', 'Flow1-v2', data/*, context*/).then(function (result) {
-  console.log(data);    // { count: 0 }
-  console.log(newData); // { count: 3 }
+  console.log(data);   // { count: 0 }
+  console.log(result); // { count: 3 }
 });
 ```
 
@@ -105,10 +105,10 @@ Returns an Array with all possible hook names defined by the combination of thes
 If the order doesn't make sense to your project and you have other business rules, you can define your own way to resolve the hook names.
 
 #### `#invoke(hookName, identifier, data, context)`
-Use `invoke` if any hook is async, it returns a promise with the transformed data. It'll invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided. Arguments are passed by value, so each hook needs to return the new modified value if synchronous or resolve the promise if asynchronous.
+Use `invoke` if any hook is async, it returns a promise with the transformed data. It'll invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided. Arguments are passed by value, so each hook needs to return the new modified value if synchronous or resolve the promise if asynchronous. `context` is a way to make local variables available to hook implementations and it's optional.
 
 ### `#invokeChain(hookName, identifier, context)`
-Returns a transform function that will resolve a promise chain. `context` is a way to make local variables available to hook implementations, it's optional.
+Returns a transform function that will resolve a promise chain. Works the same way as `#invoke`.
 ``` js
 // master.js
 module.exports = {
