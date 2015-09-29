@@ -221,7 +221,7 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('#invoke(hookName, indentifier, data)', function () {
+  describe('#invoke(hookName, indentifier, data, context)', function () {
     it('returns a promise', function () {
       var invokeReturn = namedHooks.invoke('hookName', 'foo', 3);
 
@@ -244,7 +244,42 @@ describe('NamedHooks', function () {
         .done(done);
     });
 
-    it('hooks defined with two arguments take a `resolve` callback to fulfill a promise', function (done) {
+    it('hooks defined with two arguments take a `context` object with a closure from the invoking function', function (done) {
+      var context = {
+            foo: 'bar'
+          },
+          data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, context, resolve) {
+          resolve(context);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data, context)
+        .then(function (result) {
+          assert.strictEqual(result, context);
+        })
+        .done(done);
+    });
+
+    it('an empty object is passed as `context` if none is provided', function (done) {
+      var data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, context, resolve) {
+          resolve(context);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data)
+        .then(function (result) {
+          assert.deepEqual(result, {});
+        })
+        .done(done);
+    });
+
+    it('hooks defined with three arguments take a `resolve` callback to fulfill a promise', function (done) {
       var data = 5;
 
       namedHooks.namespace.hooks = {
@@ -256,6 +291,22 @@ describe('NamedHooks', function () {
       namedHooks.invoke('async', 'file1', data)
         .then(function (result) {
           assert.equal(result, 0);
+        })
+        .done(done);
+    });
+
+    it('hooks defined with four arguments take a `reject` callback to fulfill a promise', function (done) {
+      var data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, context, resolve, reject) {
+          reject(0);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data)
+        .catch(function (err) {
+          assert.equal(err, 0);
         })
         .done(done);
     });
