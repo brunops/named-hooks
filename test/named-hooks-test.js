@@ -492,9 +492,28 @@ describe('NamedHooks', function () {
       assert.equal(typeof returnedValue, 'function');
     });
 
+    it('can be used inside a promise chain', function (done) {
+      namedHooks.namespace.hooks = {
+        hook1: function (data, context, resolve) {
+          setImmediate(resolve, data + 60);
+        },
+
+        hook1file1: function (data) {
+          return data + 6;
+        }
+      };
+
+      q(600)
+        .then(namedHooks.invokeChain('hook1', 'file1'))
+        .then(function (result) {
+          assert.equal(result, 666);
+        })
+        .done(done);
+    });
+
     it('takes a `context` object as third parameter and makes it available as the first argument of all hooks', function (done) {
       namedHooks.namespace.hooks = {
-        hook1: function (context, data) {
+        hook1: function (data, context) {
           return data + 1;
         }
       };
@@ -514,21 +533,23 @@ describe('NamedHooks', function () {
         .done(done);
     });
 
-    it('can be used inside a promise chain', function (done) {
+    it('same `context` is accessible to all hooks, sync or async', function (done) {
+      var context = { foo: 'bar' };
+
       namedHooks.namespace.hooks = {
-        hook1: function (data, context, resolve) {
-          setImmediate(resolve, data + 60);
+        hook1: function (data, context) {
+          return data + 1;
         },
 
-        hook1file1: function (data) {
-          return data + 6;
+        hook1file1: function (data, context, resolve) {
+          setImmediate(resolve, context);
         }
       };
 
-      q(600)
-        .then(namedHooks.invokeChain('hook1', 'file1'))
+      q(3)
+        .then(namedHooks.invokeChain('hook1', 'file1', context))
         .then(function (result) {
-          assert.equal(result, 666);
+          assert.strictEqual(result, context);
         })
         .done(done);
     });
