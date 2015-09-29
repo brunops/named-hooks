@@ -248,7 +248,7 @@ describe('NamedHooks', function () {
       var data = 5;
 
       namedHooks.namespace.hooks = {
-        async: function (data, resolve) {
+        async: function (data, context, resolve) {
           resolve(0);
         }
       };
@@ -265,7 +265,7 @@ describe('NamedHooks', function () {
 
       namedHooks.namespace.hooks = {
         // async hook
-        hook1: function (data, resolve) {
+        hook1: function (data, context, resolve) {
           // make sure it executes on next loop
           setImmediate(resolve, 0);
         },
@@ -293,7 +293,7 @@ describe('NamedHooks', function () {
         },
 
         // async hook
-        hook1file1: function (data, resolve) {
+        hook1file1: function (data, context, resolve) {
           setImmediate(resolve, 0);
         },
 
@@ -303,7 +303,7 @@ describe('NamedHooks', function () {
         },
 
         // async hook 3
-        hook1bar: function (data, resolve) {
+        hook1bar: function (data, context, resolve) {
           setImmediate(resolve, data + 1);
         },
       };
@@ -434,16 +434,38 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('#invokeChain(hookName, identifier, params)', function () {
+  describe('#invokeChain(hookName, identifier, context)', function () {
     it('returns a function', function () {
       var returnedValue = namedHooks.invokeChain('hook1', 'id');
 
       assert.equal(typeof returnedValue, 'function');
     });
 
+    it('takes a `context` object as third parameter and makes it available as the first argument of all hooks', function (done) {
+      namedHooks.namespace.hooks = {
+        hook1: function (context, data) {
+          return data + 1;
+        }
+      };
+
+      var context = {
+            foo: 'bar',
+            baz: 'qux'
+          },
+          spy = sinon.spy(namedHooks.namespace.hooks, 'hook1'),
+          invokeChain = namedHooks.invokeChain('hook1', 'id', context);
+
+      q(5)
+        .then(invokeChain)
+        .then(function (result) {
+          sinon.assert.calledWith(spy, 5, context);
+        })
+        .done(done);
+    });
+
     it('can be used inside a promise chain', function (done) {
       namedHooks.namespace.hooks = {
-        hook1: function (data, resolve) {
+        hook1: function (data, context, resolve) {
           setImmediate(resolve, data + 60);
         },
 
@@ -461,3 +483,4 @@ describe('NamedHooks', function () {
     });
   });
 });
+
