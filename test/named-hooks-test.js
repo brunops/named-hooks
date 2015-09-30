@@ -221,15 +221,7 @@ describe('NamedHooks', function () {
     });
   });
 
-  describe('#invoke(hookName, indentifier, data)', function () {
-    var errHandler;
-
-    beforeEach(function () {
-      errHandler = function errHandler(done, err) {
-        done(err);
-      };
-    });
-
+  describe('#invoke(hookName, indentifier, data, context)', function () {
     it('returns a promise', function () {
       var invokeReturn = namedHooks.invoke('hookName', 'foo', 3);
 
@@ -248,16 +240,50 @@ describe('NamedHooks', function () {
       namedHooks.invoke('sync', 'foo', data)
         .then(function (result) {
           assert.equal(result, 3);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
-    it('hooks defined with two arguments take a `resolve` callback to fulfill a promise', function (done) {
+    it('hooks defined with two arguments take a `context` object with a closure from the invoking function', function (done) {
+      var context = {
+            foo: 'bar'
+          },
+          data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, context, resolve) {
+          resolve(context);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data, context)
+        .then(function (result) {
+          assert.strictEqual(result, context);
+        })
+        .done(done);
+    });
+
+    it('an empty object is passed as `context` if none is provided', function (done) {
       var data = 5;
 
       namedHooks.namespace.hooks = {
-        async: function (data, resolve) {
+        async: function (data, context, resolve) {
+          resolve(context);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data)
+        .then(function (result) {
+          assert.deepEqual(result, {});
+        })
+        .done(done);
+    });
+
+    it('hooks defined with three arguments take a `resolve` callback to fulfill a promise', function (done) {
+      var data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, context, resolve) {
           resolve(0);
         }
       };
@@ -265,9 +291,24 @@ describe('NamedHooks', function () {
       namedHooks.invoke('async', 'file1', data)
         .then(function (result) {
           assert.equal(result, 0);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
+    });
+
+    it('hooks defined with four arguments take a `reject` callback to fulfill a promise', function (done) {
+      var data = 5;
+
+      namedHooks.namespace.hooks = {
+        async: function (data, context, resolve, reject) {
+          reject(0);
+        }
+      };
+
+      namedHooks.invoke('async', 'file1', data)
+        .catch(function (err) {
+          assert.equal(err, 0);
+        })
+        .done(done);
     });
 
     it('sync and async hooks can be mixed', function (done) {
@@ -275,7 +316,7 @@ describe('NamedHooks', function () {
 
       namedHooks.namespace.hooks = {
         // async hook
-        hook1: function (data, resolve) {
+        hook1: function (data, context, resolve) {
           // make sure it executes on next loop
           setImmediate(resolve, 0);
         },
@@ -289,9 +330,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'file1', data)
         .then(function (result) {
           assert.equal(result, 1);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('sync and async hooks can be mixed, like, a lot', function (done) {
@@ -304,7 +344,7 @@ describe('NamedHooks', function () {
         },
 
         // async hook
-        hook1file1: function (data, resolve) {
+        hook1file1: function (data, context, resolve) {
           setImmediate(resolve, 0);
         },
 
@@ -314,7 +354,7 @@ describe('NamedHooks', function () {
         },
 
         // async hook 3
-        hook1bar: function (data, resolve) {
+        hook1bar: function (data, context, resolve) {
           setImmediate(resolve, data + 1);
         },
       };
@@ -322,15 +362,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'file1-foo-bar', data)
         .then(function (result) {
           assert.equal(result, 7);
-          done();
         })
-        .catch(errHandler.bind(null, done));
-    });
-
-    it('returns a function if called with only two parameters', function () {
-      var returnedValue = namedHooks.invoke('hook1', 'id');
-
-      assert.equal(typeof returnedValue, 'function');
+        .done(done);
     });
 
     it('invokes `hook1` when `hookName` is "hook1"', function (done) {
@@ -343,9 +376,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'id', {})
         .then(function () {
           assert.equal(spyHook1.called, true);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('invokes `hook1` and `hook1file1` hooks for `#invoke("hook1", "file1")`', function (done) {
@@ -361,9 +393,8 @@ describe('NamedHooks', function () {
         .then(function () {
           assert.equal(spyHook1.called, true);
           assert.equal(spyHook1File1.called, true);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('hooks do not modify original `data` object', function (done) {
@@ -380,9 +411,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'foo', data)
         .then(function (result) {
           assert.equal(data.count, 0);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('hooks do not modify original `data` object or nested objects (deepClone)', function (done) {
@@ -408,9 +438,8 @@ describe('NamedHooks', function () {
           assert.equal(data.nested.hey, 5);
           assert.equal(obj.hey, 5);
           assert.equal(result.nested.hey, 6);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('invokes `hook1` with `data` for `#invoke("hook1", "foo", {})`', function (done) {
@@ -427,9 +456,8 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'foo', data)
         .then(function (result) {
           assert.equal(result.count, 1);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
     });
 
     it('invokes `hook1`, `hook1file1foo` hooks with same data for `#invoke("hook1", "file1-foo", {})`', function (done) {
@@ -452,14 +480,21 @@ describe('NamedHooks', function () {
       namedHooks.invoke('hook1', 'file1-foo', data)
         .then(function (result) {
           assert.equal(result.count, 6);
-          done();
         })
-        .catch(errHandler.bind(null, done));
+        .done(done);
+    });
+  });
+
+  describe('#invokeChain(hookName, identifier, context)', function () {
+    it('returns a function', function () {
+      var returnedValue = namedHooks.invokeChain('hook1', 'id');
+
+      assert.equal(typeof returnedValue, 'function');
     });
 
     it('can be used inside a promise chain', function (done) {
       namedHooks.namespace.hooks = {
-        hook1: function (data, resolve) {
+        hook1: function (data, context, resolve) {
           setImmediate(resolve, data + 60);
         },
 
@@ -469,12 +504,55 @@ describe('NamedHooks', function () {
       };
 
       q(600)
-        .then(namedHooks.invoke('hook1', 'file1' /*, prevData */))
+        .then(namedHooks.invokeChain('hook1', 'file1'))
         .then(function (result) {
           assert.equal(result, 666);
-          done();
         })
-        .catch(errHandler.bind(null, done))
+        .done(done);
+    });
+
+    it('takes a `context` object as third parameter and makes it available as the first argument of all hooks', function (done) {
+      namedHooks.namespace.hooks = {
+        hook1: function (data, context) {
+          return data + 1;
+        }
+      };
+
+      var context = {
+            foo: 'bar',
+            baz: 'qux'
+          },
+          spy = sinon.spy(namedHooks.namespace.hooks, 'hook1'),
+          invokeChain = namedHooks.invokeChain('hook1', 'id', context);
+
+      q(5)
+        .then(invokeChain)
+        .then(function (result) {
+          sinon.assert.calledWith(spy, 5, context);
+        })
+        .done(done);
+    });
+
+    it('same `context` is accessible to all hooks, sync or async', function (done) {
+      var context = { foo: 'bar' };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data, context) {
+          return data + 1;
+        },
+
+        hook1file1: function (data, context, resolve) {
+          setImmediate(resolve, context);
+        }
+      };
+
+      q(3)
+        .then(namedHooks.invokeChain('hook1', 'file1', context))
+        .then(function (result) {
+          assert.strictEqual(result, context);
+        })
+        .done(done);
     });
   });
 });
+
