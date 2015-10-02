@@ -124,7 +124,7 @@ In the middle of a promise chain:
   // example using `q` module for promises, it'll work with
   // any promise implementation that complies with A+
   q(5)
-    .then(namedHooks.invoke('hookName', 'indentifier', { foo: 'bar' }))
+    .then(namedHooks.invokeChain('hookName', 'indentifier', { foo: 'bar' }))
     .then(console.log);
 
   // outputs `10`
