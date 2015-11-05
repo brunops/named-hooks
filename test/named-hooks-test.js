@@ -244,6 +244,33 @@ describe('NamedHooks', function () {
         .done(done);
     });
 
+    it('does not modify original `data` object or nested objects (deepClone)', function (done) {
+      var obj = {
+          hey: 5
+        },
+
+        data = {
+          count: 0,
+          nested: obj
+        };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data) {
+          data.nested.hey += 1;
+
+          return data;
+        }
+      };
+
+      namedHooks.invoke('hook1', 'foo', data)
+        .then(function (result) {
+          assert.equal(data.nested.hey, 5);
+          assert.equal(obj.hey, 5);
+          assert.equal(result.nested.hey, 6);
+        })
+        .done(done)
+    });
+
     it('hooks defined with two arguments take a `context` object with a closure from the invoking function', function (done) {
       var context = {
             foo: 'bar'
@@ -509,6 +536,34 @@ describe('NamedHooks', function () {
           assert.equal(result, 666);
         })
         .done(done);
+    });
+
+    it('does not modify original `data` object or nested objects (deepClone)', function (done) {
+      var obj = {
+          hey: 5
+        },
+
+        data = {
+          count: 0,
+          nested: obj
+        };
+
+      namedHooks.namespace.hooks = {
+        hook1: function (data) {
+          data.nested.hey += 1;
+
+          return data;
+        }
+      };
+
+      q(data)
+        .then(namedHooks.invokeChain('hook1', ''))
+        .then(function (result) {
+          assert.equal(data.nested.hey, 5);
+          assert.equal(obj.hey, 5);
+          assert.equal(result.nested.hey, 6);
+        })
+        .done(done)
     });
 
     it('takes a `context` object as third parameter and makes it available as the first argument of all hooks', function (done) {
