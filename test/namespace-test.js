@@ -61,6 +61,14 @@ describe('Namespace', function () {
       assert.equal(Object.keys(namespace.hooks).length, 0);
     });
 
+    it('ignores directories inside loaded folder', function () {
+      readdirSyncStub.returns([ 'folder', 'file1.js' ]);
+
+      assert.doesNotThrow(function () {
+        namespace.load(folder);
+      });
+    });
+
     it('loads `file1.js` exported methods into `this.hooks`', function () {
       readdirSyncStub.returns([ 'file1.js' ]);
 
