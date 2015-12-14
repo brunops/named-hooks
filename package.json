@@ -1,6 +1,6 @@
 {
   "name": "named-hooks",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Define and invoke hooks based on function names",
   "main": "index.js",
   "directories": {
