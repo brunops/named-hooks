@@ -118,6 +118,16 @@ describe('NamedHooks', function () {
 
       assert.deepEqual(result1, result2);
     });
+
+    it('memoization is invalidated when `#init` is called', function () {
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      namedHooks.init(path.resolve('./test/namespace-mock-folder'));
+
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      sinon.assert.calledTwice(spy);
+    });
   });
 
   describe('#defineHookResolutionRules(callback)', function () {
@@ -150,6 +160,18 @@ describe('NamedHooks', function () {
       namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
 
       sinon.assert.calledOnce(spy);
+    });
+
+    it('invalidates memoization cache', function () {
+      var spy = sinon.spy();
+
+      namedHooks.defineHookResolutionRules(spy);
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      namedHooks.defineHookResolutionRules(spy);
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      sinon.assert.calledTwice(spy);
     });
   });
 
