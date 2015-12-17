@@ -68,6 +68,16 @@ describe('NamedHooks', function () {
   });
 
   describe('#getPossibleHookNames(hookName, identifier)', function () {
+    var spy;
+
+    beforeEach(function () {
+      spy = sinon.spy(namedHooks, '_getPossibleHookNames');
+    });
+
+    afterEach(function () {
+      spy.restore();
+    });
+
     it('returns empty Array if `hookName` is `undefined`', function () {
       assert.deepEqual(namedHooks.getPossibleHookNames(), []);
     });
@@ -86,6 +96,27 @@ describe('NamedHooks', function () {
 
     it('returns [ "hookName", "hookNameID", "hookNamefoo", "hookNamefoobar", "hookNameIDfoobar" ] if `identifier` is `ID-foo-bar`', function () {
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo-bar'), [ "hookName", "hookNameID", "hookNamefoo", "hookNamebar", "hookNameIDfoobar" ]);
+    });
+
+    it('memoizes the result', function () {
+      namedHooks.getPossibleHookNames('hookName2', 'ID-foo-bar');
+      namedHooks.getPossibleHookNames('hookName2', 'ID-foo-bar');
+
+      sinon.assert.calledOnce(spy);
+    });
+
+    it('memoization key is `hookName` + `identifier`', function () {
+      namedHooks.getPossibleHookNames('hookName3', 'ID'),
+      namedHooks.getPossibleHookNames('hookName3', 'ID-foo');
+
+      sinon.assert.calledTwice(spy);
+    });
+
+    it('memoized result is exactly the same', function () {
+      var result1 = namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar'),
+          result2 = namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
+
+      assert.deepEqual(result1, result2);
     });
   });
 

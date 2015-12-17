@@ -33,6 +33,7 @@
   "dependencies": {
     "debug": "^2.2.0",
     "lodash.clonedeep": "^3.0.2",
+    "lodash.memoize": "^3.0.4",
     "q": "^1.4.1"
   }
 }
