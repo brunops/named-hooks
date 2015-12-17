@@ -125,12 +125,10 @@ describe('NamedHooks', function () {
       delete namedHooks.getPossibleHookNames;
     });
 
-    it('sets `getPossibleHookNames` with `callback`', function () {
-      var getPossibleHookNames = function () {};
-
-      namedHooks.defineHookResolutionRules(getPossibleHookNames);
-
-      assert.equal(namedHooks.getPossibleHookNames, getPossibleHookNames);
+    it('throws if `callback` is not a function', function () {
+      assert.throws(function () {
+        namedHooks.defineHookResolutionRules(123);
+      });
     });
 
     it('`#getPossibleHookNames` returns [ "hai" ] if `callback` returns [ "hai" ]', function () {
@@ -141,6 +139,17 @@ describe('NamedHooks', function () {
       namedHooks.defineHookResolutionRules(getPossibleHookNames);
 
       assert.deepEqual(namedHooks.getPossibleHookNames(), [ 'hai' ]);
+    });
+
+    it('memoization keeps working', function () {
+      var spy = sinon.spy();
+
+      namedHooks.defineHookResolutionRules(spy);
+
+      namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
+      namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
+
+      sinon.assert.calledOnce(spy);
     });
   });
 
