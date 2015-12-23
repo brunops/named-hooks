@@ -68,6 +68,16 @@ describe('NamedHooks', function () {
   });
 
   describe('#getPossibleHookNames(hookName, identifier)', function () {
+    var spy;
+
+    beforeEach(function () {
+      spy = sinon.spy(namedHooks, '_getPossibleHookNames');
+    });
+
+    afterEach(function () {
+      spy.restore();
+    });
+
     it('returns empty Array if `hookName` is `undefined`', function () {
       assert.deepEqual(namedHooks.getPossibleHookNames(), []);
     });
@@ -87,6 +97,37 @@ describe('NamedHooks', function () {
     it('returns [ "hookName", "hookNameID", "hookNamefoo", "hookNamefoobar", "hookNameIDfoobar" ] if `identifier` is `ID-foo-bar`', function () {
       assert.deepEqual(namedHooks.getPossibleHookNames('hookName', 'ID-foo-bar'), [ "hookName", "hookNameID", "hookNamefoo", "hookNamebar", "hookNameIDfoobar" ]);
     });
+
+    it('memoizes the result', function () {
+      namedHooks.getPossibleHookNames('hookName2', 'ID-foo-bar');
+      namedHooks.getPossibleHookNames('hookName2', 'ID-foo-bar');
+
+      sinon.assert.calledOnce(spy);
+    });
+
+    it('memoization key is `hookName` + `identifier`', function () {
+      namedHooks.getPossibleHookNames('hookName3', 'ID'),
+      namedHooks.getPossibleHookNames('hookName3', 'ID-foo');
+
+      sinon.assert.calledTwice(spy);
+    });
+
+    it('memoized result is exactly the same', function () {
+      var result1 = namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar'),
+          result2 = namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
+
+      assert.deepEqual(result1, result2);
+    });
+
+    it('memoization is invalidated when `#init` is called', function () {
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      namedHooks.init(path.resolve('./test/namespace-mock-folder'));
+
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      sinon.assert.calledTwice(spy);
+    });
   });
 
   describe('#defineHookResolutionRules(callback)', function () {
@@ -94,12 +135,10 @@ describe('NamedHooks', function () {
       delete namedHooks.getPossibleHookNames;
     });
 
-    it('sets `getPossibleHookNames` with `callback`', function () {
-      var getPossibleHookNames = function () {};
-
-      namedHooks.defineHookResolutionRules(getPossibleHookNames);
-
-      assert.equal(namedHooks.getPossibleHookNames, getPossibleHookNames);
+    it('throws if `callback` is not a function', function () {
+      assert.throws(function () {
+        namedHooks.defineHookResolutionRules(123);
+      });
     });
 
     it('`#getPossibleHookNames` returns [ "hai" ] if `callback` returns [ "hai" ]', function () {
@@ -110,6 +149,29 @@ describe('NamedHooks', function () {
       namedHooks.defineHookResolutionRules(getPossibleHookNames);
 
       assert.deepEqual(namedHooks.getPossibleHookNames(), [ 'hai' ]);
+    });
+
+    it('memoization keeps working', function () {
+      var spy = sinon.spy();
+
+      namedHooks.defineHookResolutionRules(spy);
+
+      namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
+      namedHooks.getPossibleHookNames('hookName4', 'ID-foo-bar');
+
+      sinon.assert.calledOnce(spy);
+    });
+
+    it('invalidates memoization cache', function () {
+      var spy = sinon.spy();
+
+      namedHooks.defineHookResolutionRules(spy);
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      namedHooks.defineHookResolutionRules(spy);
+      namedHooks.getPossibleHookNames('hookName5', 'ID-foo-bar');
+
+      sinon.assert.calledTwice(spy);
     });
   });
 
