@@ -1,10 +1,10 @@
 [![Build Status](https://travis-ci.org/brunops/named-hooks.svg)](https://travis-ci.org/brunops/named-hooks)
 
-#named-hooks
+# named-hooks
 
 Allow hooks to be defined and invoked in order based on its names.
 
-#Usage
+# Usage
 
 By default, `named-hooks` use filenames and `-` as delimiters to define hook invoke order.
 
@@ -93,7 +93,7 @@ myHooks.invoke('hook1', 'Flow1-v2', data/*, context*/).then(function (result) {
 });
 ```
 
-#API
+# API
 
 #### `#init(folder)`
 Load all files from `folder` synchronously and populate hooks, you'll probably do this only once.
@@ -107,7 +107,7 @@ If the order doesn't make sense to your project and you have other business rule
 #### `#invoke(hookName, identifier, data, context)`
 Use `invoke` if any hook is async, it returns a promise with the transformed data. It'll invoke all hooks returned by `#getPossibleHookNames(hookName, identifier)` that are defined repassing all arguments provided. Arguments are passed by value, so each hook needs to return the new modified value if synchronous or resolve the promise if asynchronous. `context` is a way to make local variables available to hook implementations and it's optional.
 
-### `#invokeChain(hookName, identifier, context)`
+#### `#invokeChain(hookName, identifier, context)`
 Returns a transform function that will resolve a promise chain. Works the same way as `#invoke`.
 ``` js
 // master.js
@@ -133,12 +133,12 @@ In the middle of a promise chain:
 #### `#invokeSync(hookName, identifier, data)`
 Works the same way as `#invoke`, but returns the actual transformed data instead of a promise, useful if all hooks are exclusively synchronous.All hooks needs to return the new modified value.
 
-#Contributing
+# Contributing
 Any PR is more than welcome, just make sure your stuff is tested and that all tests are passing.
 
 **tl;dr**: `npm test` must be green and if I delete your code it should be red :)
 
-#License
+# License
 
 MIT
 
